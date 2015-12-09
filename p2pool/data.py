@@ -61,8 +61,8 @@ def load_share(share, net, peer_addr):
 DONATION_SCRIPT = '4104ffd03de44a6e11b9917f3a29f9443283d9871c9d743ef30d5eddcd37094b64d1b3d8090496b53256786bf5c82932ec23c3b74d9f05a6f95a8b5529352656664bac'.decode('hex')
 
 class NewShare(object):
-    VERSION = 14
-    VOTING_VERSION = 14
+    VERSION = 15
+    VOTING_VERSION = 15
     SUCCESSOR = None
     
     small_block_header_type = pack.ComposedType([
@@ -381,8 +381,8 @@ class NewShare(object):
         return dict(header=self.header, txs=[self.check(tracker)] + other_txs)
 
 class Share(object):
-    VERSION = 13
-    VOTING_VERSION = 13
+    VERSION = 14
+    VOTING_VERSION = 14
     SUCCESSOR = NewShare
     
     small_block_header_type = pack.ComposedType([
@@ -633,10 +633,10 @@ class Share(object):
                     from p2pool import p2p
                     raise p2p.PeerMisbehavingError('switch without enough history')
                 
-                # switch only valid if 85% of hashes in [self.net.CHAIN_LENGTH*9//10, self.net.CHAIN_LENGTH] for new version
+                # switch only valid if 60% of hashes in [self.net.CHAIN_LENGTH*9//10, self.net.CHAIN_LENGTH] for new version
                 counts = get_desired_version_counts(tracker,
                     tracker.get_nth_parent_hash(previous_share.hash, self.net.CHAIN_LENGTH*9//10), self.net.CHAIN_LENGTH//10)
-                if counts.get(self.VERSION, 0) < sum(counts.itervalues())*85//100:
+                if counts.get(self.VERSION, 0) < sum(counts.itervalues())*60//100:
                     raise p2p.PeerMisbehavingError('switch without enough hash power upgraded')
             else:
                 raise p2p.PeerMisbehavingError('''%s can't follow %s''' % (type(self).__name__, type(previous_share).__name__))
