@@ -45,7 +45,7 @@ def _atomic_write(filename, data):
         os.remove(filename)
         os.rename(filename + '.new', filename)
 
-def get_web_root(wb, datadir_path, bitcoind_getinfo_var, stop_event=variable.Event()):
+def get_web_root(wb, datadir_path, bitcoind_getinfo_var, stop_event=variable.Event(), static_dir=None):
     node = wb.node
     start_time = time.time()
     
@@ -485,6 +485,8 @@ def get_web_root(wb, datadir_path, bitcoind_getinfo_var, stop_event=variable.Eve
     bitcoind_root.putChild('rawtransaction',    WebInterface(lambda transaction_hash_str: node.bitcoind.rpc_getrawtransaction(transaction_hash_str, 1)))
     web_root.putChild('bitcoind', bitcoind_root)
 
-    web_root.putChild('static', static.File(os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), 'web-static')))
+    if static_dir is None:
+        static_dir = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), 'web-static')
+    web_root.putChild('static', static.File(static_dir))
     
     return web_root
