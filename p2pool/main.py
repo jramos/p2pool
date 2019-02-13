@@ -105,7 +105,7 @@ def main(args, net, datadir_path, merged_urls, worker_endpoint):
         bitcoind_getinfo_var = variable.Variable(None)
         @defer.inlineCallbacks
         def poll_warnings():
-            bitcoind_getinfo_var.set((yield deferral.retry('Error while calling getinfo:')(bitcoind.rpc_getinfo)()))
+            bitcoind_getinfo_var.set((yield deferral.retry('Error while calling getinfo:')(bitcoind.rpc_getnetworkinfo)()))
         yield poll_warnings()
         deferral.RobustLoopingCall(poll_warnings).start(20*60)
         
@@ -202,6 +202,12 @@ def main(args, net, datadir_path, merged_urls, worker_endpoint):
                 if share.hash in node.tracker.verified.items:
                     ss.add_verified_hash(share.hash)
         deferral.RobustLoopingCall(save_shares).start(60)
+
+        if len(shares) > net.CHAIN_LENGTH:
+            best_share = shares[node.best_share_var.value]
+            previous_share = shares[best_share.share_data['previous_share_hash']]
+            counts = p2pool_data.get_desired_version_counts(node.tracker, node.tracker.get_nth_parent_hash(previous_share.hash, net.CHAIN_LENGTH*9//10), net.CHAIN_LENGTH//10)
+            p2pool_data.update_min_protocol_version(counts, best_share)
         
         print '    ...success!'
         print
