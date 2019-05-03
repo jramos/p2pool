@@ -227,8 +227,8 @@ License:
 
 Donations
 -------------------------
-    Forrest Voight, BTC 1HNeqi3pJRNvXybNX4FKzZgYJsdTSqJTbk
-    Justin Ramos, BTC ***REMOVED***
+    Forrest Voight, BTC `1HNeqi3pJRNvXybNX4FKzZgYJsdTSqJTbk`
+    Justin Ramos, BTC `18HFFqZv2KJMHPNwPes839PJd5GZc4cT3U`
 
 License
 -------------------------
